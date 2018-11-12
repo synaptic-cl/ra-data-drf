@@ -132,6 +132,18 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
      * @returns {Promise} the Promise for a data response
      */
     return (type, resource, params) => {
+        /**
+         * Split GET_MANY request into multiple requests, since it's not supported
+         * by default.
+         */
+        if (type === GET_MANY) {
+            return Promise.all(
+                params.ids.map(id =>
+                    httpClient(`${apiUrl}/${resource}/${id}/`, { method: 'GET' })
+                )
+            ).then(responses => ({ data: responses.map(response => response.json) }));
+        }
+
         const { url, options } = convertDataRequestToHttp(type, resource, params);
         return httpClient(url, options)
             .then(response => convertHttpResponse(response, type, resource, params));
