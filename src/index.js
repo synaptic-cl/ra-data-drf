@@ -1,3 +1,4 @@
+import { stringify } from 'query-string';
 import {
     fetchUtils,
     GET_LIST,
@@ -36,6 +37,19 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
             case GET_ONE:
                 url = `${apiUrl}/${resource}/${params.id}/`;
                 break;
+            case GET_LIST: {
+                const { page, perPage } = params.pagination;
+                const { field, order } = params.sort;
+                const { filter } = params;
+                const query = {
+                    page,
+                    page_size: perPage,
+                    ordering: `${order === 'ASC' ? '' : '-'}${field}`,
+                    ...filter
+                };
+                url = `${apiUrl}/${resource}/?${stringify(query)}`;
+                break;
+            }
             case UPDATE:
                 url = `${apiUrl}/${resource}/${params.id}/`;
                 options.method = 'PUT';
@@ -63,6 +77,32 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
         const { headers, json } = response;
 
         switch (type) {
+            case GET_LIST:
+                if ('count' in json){
+                    return { data: json.results, total: json.count }
+                } else if (headers.has('content-range')) {
+                    return {
+                        data: json,
+                        total: parseInt(
+                            headers
+                            .get('content-range')
+                            .split('/')
+                            .pop(),
+                            10
+                        ),
+                    };
+                } else if ('detail' in json && json.detail === 'Invalid page.') {
+                    return { data: [], total: 0 }
+                } else {
+                    throw new Error(
+                        'The total number of results is unknown. The DRF data provider ' +
+                        'expects responses for lists of resources to contain this ' +
+                        'information to build the pagination. If you\'re not using the ' +
+                        'default PageNumberPagination class, please include this ' +
+                        'information using the Content-Range header OR a "count" key ' +
+                        'inside the response.'
+                    );
+                }
             case CREATE:
                 return { data: { ...params.data, id: json.id } };
             default:
