@@ -36,6 +36,11 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
             case GET_ONE:
                 url = `${apiUrl}/${resource}/${params.id}/`;
                 break;
+            case UPDATE:
+                url = `${apiUrl}/${resource}/${params.id}/`;
+                options.method = 'PUT';
+                options.body = JSON.stringify(params.data);
+                break;
             default:
                 throw new Error(`Unsupported Data Provider request type ${type}`);
         }
