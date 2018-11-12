@@ -24,15 +24,18 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
      * @returns {Object} { url, options } The HTTP request parameters
      */
     const convertDataRequestToHttp = (type, resource, params) => {
-        let url = ""
-        let options = {}
+        let url = "";
+        let options = {};
 
         switch(type){
+            case GET_ONE:
+                url = `${apiUrl}/${resource}/${params.id}/`;
+                break;
             default:
-                throw new Error(`Unsupported Data Provider request type ${type}`)
+                throw new Error(`Unsupported Data Provider request type ${type}`);
         }
 
-        return { url, options }
+        return { url, options };
     }
 
     /**
@@ -43,7 +46,8 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
      * @returns {Object} Data response
      */
     const convertHttpResponse = (response, type, resource, params) => {
-        return {}
+        const { headers, json } = response;
+        return { data: json };
     }
 
     /**
