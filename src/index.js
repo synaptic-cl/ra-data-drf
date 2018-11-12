@@ -28,6 +28,11 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
         let options = {};
 
         switch(type){
+            case CREATE:
+                url = `${apiUrl}/${resource}/`;
+                options.method = 'POST';
+                options.body = JSON.stringify(params.data);
+                break;
             case GET_ONE:
                 url = `${apiUrl}/${resource}/${params.id}/`;
                 break;
@@ -47,7 +52,13 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
      */
     const convertHttpResponse = (response, type, resource, params) => {
         const { headers, json } = response;
-        return { data: json };
+
+        switch (type) {
+            case CREATE:
+                return { data: { ...params.data, id: json.id } };
+            default:
+                return { data: json };
+        }
     }
 
     /**
