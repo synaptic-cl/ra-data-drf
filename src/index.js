@@ -41,6 +41,10 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                 options.method = 'PUT';
                 options.body = JSON.stringify(params.data);
                 break;
+            case DELETE:
+                url = `${apiUrl}/${resource}/${params.id}/`;
+                options.method = 'DELETE';
+                break;
             default:
                 throw new Error(`Unsupported Data Provider request type ${type}`);
         }
