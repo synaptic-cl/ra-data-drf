@@ -133,15 +133,43 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
      */
     return (type, resource, params) => {
         /**
-         * Split GET_MANY request into multiple requests, since it's not supported
-         * by default.
+         * Split GET_MANY, UPDATE_MANY and DELETE_MANY requests into multiple promises,
+         * since they're not supported by default.
          */
-        if (type === GET_MANY) {
-            return Promise.all(
-                params.ids.map(id =>
-                    httpClient(`${apiUrl}/${resource}/${id}/`, { method: 'GET' })
-                )
-            ).then(responses => ({ data: responses.map(response => response.json) }));
+        switch (type) {
+            case GET_MANY:
+                return Promise.all(
+                    params.ids.map(id =>
+                        httpClient(`${apiUrl}/${resource}/${id}/`, {
+                            method: 'GET'
+                        })
+                    )
+                ).then(responses => ({
+                    data: responses.map(response => response.json),
+                }));
+            case UPDATE_MANY:
+                return Promise.all(
+                    params.ids.map(id =>
+                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                            method: 'PUT',
+                            body: JSON.stringify(params.data),
+                        })
+                    )
+                ).then(responses => ({
+                    data: responses.map(response => response.json),
+                }));
+            case DELETE_MANY:
+                return Promise.all(
+                    params.ids.map(id =>
+                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                            method: 'DELETE',
+                        })
+                    )
+                ).then(responses => ({
+                    data: responses.map(response => response.json),
+                }));
+            default:
+                break;
         }
 
         const { url, options } = convertDataRequestToHttp(type, resource, params);
