@@ -1,0 +1,25 @@
+{
+  "name": "ra-data-drf",
+  "version": "1.0.0",
+  "description": "A React-admin data provider for backends built with Django REST Framework",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synaptic-cl/ra-data-drf.git"
+  },
+  "keywords": [
+    "reactjs",
+    "react-admin",
+    "django",
+    "drf",
+    "djangorestframework"
+  ],
+  "author": "Felipe Rubilar",
+  "bugs": {
+    "url": "https://github.com/synaptic-cl/ra-data-drf/issues"
+  },
+  "homepage": "https://github.com/synaptic-cl/ra-data-drf#readme"
+}
