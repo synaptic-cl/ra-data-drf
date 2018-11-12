@@ -50,6 +50,20 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                 url = `${apiUrl}/${resource}/?${stringify(query)}`;
                 break;
             }
+            case GET_MANY_REFERENCE: {
+                const { page, perPage } = params.pagination;
+                const { field, order } = params.sort;
+                const { filter, target, id } = params;
+                const query = {
+                    page,
+                    page_size: perPage,
+                    ordering: `${order === 'ASC' ? '' : '-'}${field}`,
+                    ...filter,
+                    [target]: id
+                };
+                url = `${apiUrl}/${resource}/?${stringify(query)}`;
+                break;
+            }
             case UPDATE:
                 url = `${apiUrl}/${resource}/${params.id}/`;
                 options.method = 'PUT';
@@ -78,6 +92,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
 
         switch (type) {
             case GET_LIST:
+            case GET_MANY_REFERENCE:
                 if ('count' in json){
                     return { data: json.results, total: json.count }
                 } else if (headers.has('content-range')) {
