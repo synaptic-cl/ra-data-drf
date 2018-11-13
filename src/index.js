@@ -176,5 +176,6 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
         return httpClient(url, options)
             .then(response => convertHttpResponse(response, type, resource, params));
     }
-
 }
+
+export default drfProvider;
