@@ -12,7 +12,7 @@ npm install --save ra-data-drf
 ```js
 // in App.js
 import React from 'react';
-import { Admin, Resource } from 'admin-on-rest';
+import { Admin, Resource } from 'react-admin';
 import drfProvider from 'ra-data-drf';
 import { UserList } from './users';
 
