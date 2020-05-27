@@ -152,7 +152,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
             case UPDATE_MANY:
                 return Promise.all(
                     params.ids.map(id =>
-                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                        httpClient(`${apiUrl}/${resource}/${id}/`, {
                             method: 'PUT',
                             body: JSON.stringify(params.data),
                         })
@@ -163,7 +163,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
             case DELETE_MANY:
                 return Promise.all(
                     params.ids.map(id =>
-                        httpClient(`${apiUrl}/${resource}/${id}`, {
+                        httpClient(`${apiUrl}/${resource}/${id}/`, {
                             method: 'DELETE',
                         })
                     )
