@@ -1,6 +1,9 @@
 # ra-data-drf
 A React-admin data provider for backends built with Django REST Framework
 
+## Support
+To use this you have to be on react-admin v2.x or similar (it still does not support major v3.x)
+
 ## Installation
 
 ```sh
