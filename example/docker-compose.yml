@@ -1,0 +1,30 @@
+version: '3'
+
+networks:
+  example:
+    external: true
+
+services:
+  backend:
+    image: python:3.7-slim
+    build: ./django
+    command: python -m manage runserver 0.0.0.0:8000
+    volumes:
+      - ./django:/code
+    ports:
+      - '8000:8000'
+    stdin_open: true
+    tty: true
+    networks:
+      - example
+  frontend:
+    image: node:14-slim
+    build: ./react-admin-example
+    command: npm run start
+    volumes:
+      - ./react-admin-example:/code
+    ports:
+      - 3000:3000
+    networks:
+      - example
+
