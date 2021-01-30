@@ -47,7 +47,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                     ordering: `${order === 'ASC' ? '' : '-'}${field}`,
                     ...filter
                 };
-                url = `${apiUrl}/${resource}/?${stringify(query)}`;
+                url = `${apiUrl}/${resource}/?${JSON.stringify(query)}`;
                 break;
             }
             case GET_MANY_REFERENCE: {
@@ -61,7 +61,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                     ...filter,
                     [target]: id
                 };
-                url = `${apiUrl}/${resource}/?${stringify(query)}`;
+                url = `${apiUrl}/${resource}/?${JSON.stringify(query)}`;
                 break;
             }
             case UPDATE:
