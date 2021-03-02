@@ -16,8 +16,7 @@ import {
 /**
  * Maps react-admin queries to the default format of Django REST Framework
  */
-const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
-
+const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson, idKey = 'id') => {
     /**
      * @param {String} type React-admin request type, e.g. 'GET_LIST'
      * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -94,10 +93,10 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
             case GET_LIST:
             case GET_MANY_REFERENCE:
                 if ('count' in json){
-                    return { data: json.results, total: json.count }
+                    return { data: json.results.map(res => ({ ...res, id: res[idKey] })), total: json.count }
                 } else if (headers.has('content-range')) {
                     return {
-                        data: json,
+                        data: json.map(res => ({ ...res, id: res[idKey] })),
                         total: parseInt(
                             headers
                             .get('content-range')
@@ -119,11 +118,11 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                     );
                 }
             case CREATE:
-                return { data: { ...params.data, id: json.id } };
+                return { data: { ...params.data, id: [idKey] } };
             case DELETE:
                 return { data: params.previousData };
             default:
-                return { data: json };
+                return { data: { ...json, id: json[idKey] } };
         }
     }
 
@@ -147,7 +146,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                         })
                     )
                 ).then(responses => ({
-                    data: responses.map(response => response.json),
+                    data: responses.map(response => ({ ...response.json, id: response.json[idKey] })),
                 }));
             case UPDATE_MANY:
                 return Promise.all(
@@ -158,7 +157,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                         })
                     )
                 ).then(responses => ({
-                    data: responses.map(response => response.json),
+                    data: responses.map(response => ({ ...response.json, id: response.json[idKey] })),
                 }));
             case DELETE_MANY:
                 return Promise.all(
@@ -168,7 +167,7 @@ const drfProvider = (apiUrl, httpClient=fetchUtils.fetchJson) => {
                         })
                     )
                 ).then(responses => ({
-                    data: responses.map(response => response.json),
+                    data: responses.map(response => ({ ...response.json, id: response.json[idKey] })),
                 }));
             default:
                 break;
